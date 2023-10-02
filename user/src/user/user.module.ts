@@ -19,5 +19,6 @@ import { UserRepo } from './user.repo';
     PrismaModule,
   ],
   providers: [UserResolver, UserService, UserRepo],
+  exports: [UserRepo],
 })
 export class UserModule {}

@@ -4,18 +4,28 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Post } from '@prisma/client';
+import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/rpc';
 
 import { CreatePostInput } from './dto/create-post.input';
 import { PostRepo } from './post.repo';
+import { TrpcService } from 'src/trpc/trpc.service';
 
 @Injectable()
 export class PostService {
-  constructor(private postRepository: PostRepo) {}
+  constructor(private trpc: TrpcService, private postRepository: PostRepo) {}
 
   public async create(createPostInput: CreatePostInput): Promise<Post> {
     const postDB = await this.postRepository.getByTitle({
       title: createPostInput.title,
     });
+
+    try {
+      await this.trpc.client.getUser.query({
+        id: createPostInput.userId,
+      });
+    } catch (err) {
+      throw new BadRequestException(err.shape.message);
+    }
 
     if (postDB) {
       throw new BadRequestException(
