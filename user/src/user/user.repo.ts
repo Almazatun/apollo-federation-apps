@@ -7,17 +7,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UserRepo {
   constructor(private prisma: PrismaService) {}
 
-  public save(createUserInput: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data: createUserInput });
+  public list(): Promise<User[]> {
+    return this.prisma.user.findMany();
   }
 
   public get(getUserInput: Prisma.UserWhereUniqueInput): Promise<null | User> {
     return this.prisma.user.findUnique({ where: getUserInput });
   }
 
-  public getByUsername(
-    getUserInput: Prisma.UserWhereInput,
-  ): Promise<null | User> {
+  public getByEmail(getUserInput: Prisma.UserWhereInput): Promise<null | User> {
     return this.prisma.user.findFirst({ where: getUserInput });
+  }
+
+  public save(createUserInput: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({ data: { ...createUserInput } });
   }
 }

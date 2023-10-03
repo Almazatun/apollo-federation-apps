@@ -1,27 +1,31 @@
-type Post {
-  id: String!
+type Post @key(fields: "id") {
+  id: ID!
   title: String!
-  userId: String!
+  user_id: String!
+  user: User
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  posts: [Post]!
 }
 
 input CreatePostInput {
   title: String!
-  userId: String!
+  userId: ID!
 }
 
 input UpdatePostInput {
-  id: String!
+  id: ID!
   title: String!
   userId: String!
 }
 
 type Query {
-  posts: [Post]!
-  post(id: String!): Post
+  listPost: [Post]!
+  getPost(id: String!): Post
 }
 
 type Mutation {
   createPost(createPostInput: CreatePostInput!): Post!
-  updatePost(updatePostInput: UpdatePostInput!): Post!
-  removePost(id: String!): Post
 }

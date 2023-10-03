@@ -10,6 +10,7 @@ import { PostResolver } from './post.resolver';
 import { PostRepo } from './post.repo';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { TrpcModule } from 'src/trpc/trpc.module';
+import { UserResolver } from './user.resolver';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { TrpcModule } from 'src/trpc/trpc.module';
     }),
     PrismaModule,
   ],
-  providers: [PostResolver, PostService, PostRepo],
+  providers: [PostResolver, UserResolver, PostService, PostRepo],
   exports: [],
 })
 export class PostModule {}

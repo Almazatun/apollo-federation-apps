@@ -4,40 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Post } from '@prisma/client';
-import { TRPC_ERROR_CODES_BY_KEY } from '@trpc/server/rpc';
 
-import { CreatePostInput } from './dto/create-post.input';
+import { CreatePostInput } from './input/create-post.input';
 import { PostRepo } from './post.repo';
 import { TrpcService } from 'src/trpc/trpc.service';
 
 @Injectable()
 export class PostService {
   constructor(private trpc: TrpcService, private postRepository: PostRepo) {}
-
-  public async create(createPostInput: CreatePostInput): Promise<Post> {
-    const postDB = await this.postRepository.getByTitle({
-      title: createPostInput.title,
-    });
-
-    try {
-      await this.trpc.client.getUser.query({
-        id: createPostInput.userId,
-      });
-    } catch (err) {
-      throw new BadRequestException(err.shape.message);
-    }
-
-    if (postDB) {
-      throw new BadRequestException(
-        `Post already exists by title ${createPostInput.title}`,
-      );
-    }
-
-    return this.postRepository.save({
-      ...createPostInput,
-      user_id: createPostInput.userId,
-    });
-  }
 
   public async list(): Promise<Post[]> {
     return this.postRepository.list();
@@ -51,5 +25,31 @@ export class PostService {
     }
 
     return postDB;
+  }
+
+  public async create(createPostInput: CreatePostInput): Promise<Post> {
+    try {
+      await this.trpc.client.getUser.query({
+        id: createPostInput.userId,
+      });
+    } catch (err) {
+      throw new BadRequestException(err.shape.message);
+    }
+
+    const postDB = await this.postRepository.getByTitle({
+      title: createPostInput.title,
+      user_id: createPostInput.userId,
+    });
+
+    if (postDB) {
+      throw new BadRequestException(
+        `Post already exists by title ${createPostInput.title}`,
+      );
+    }
+
+    return this.postRepository.save({
+      title: createPostInput.title,
+      user_id: createPostInput.userId,
+    });
   }
 }

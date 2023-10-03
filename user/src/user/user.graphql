@@ -1,11 +1,12 @@
 type User @key(fields: "id") {
   id: ID!
-  name: String!
-  email: String
+  username: String!
+  email: String!
 }
 
 extend type Query {
   getUser(id: ID!): User
+  listUser: [User]!
 }
 
 extend type Mutation {
@@ -14,5 +15,5 @@ extend type Mutation {
 
 input CreateUserInput {
   username: String!
-  email: String
+  email: String!
 }

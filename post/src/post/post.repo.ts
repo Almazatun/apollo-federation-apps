@@ -11,8 +11,8 @@ export class PostRepo {
     return this.prisma.post.findMany();
   }
 
-  public save(createPostInput: Prisma.PostCreateInput): Promise<Post> {
-    return this.prisma.post.create({ data: createPostInput });
+  public listByUserId(whereInput: Prisma.PostWhereInput): Promise<Post[]> {
+    return this.prisma.post.findMany({ where: whereInput });
   }
 
   public get(getPostInput: Prisma.PostWhereUniqueInput): Promise<null | Post> {
@@ -21,5 +21,9 @@ export class PostRepo {
 
   public getByTitle(getPostInput: Prisma.PostWhereInput): Promise<null | Post> {
     return this.prisma.post.findFirst({ where: getPostInput });
+  }
+
+  public save(createPostInput: Prisma.PostCreateInput): Promise<Post> {
+    return this.prisma.post.create({ data: createPostInput });
   }
 }
