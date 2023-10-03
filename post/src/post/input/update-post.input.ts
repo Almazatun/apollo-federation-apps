@@ -1,6 +1,6 @@
 import { IsString, IsUUID } from 'class-validator';
 
-export class CreatePostDto {
+export class CreatePostInput {
   @IsUUID()
   id: string;
 
